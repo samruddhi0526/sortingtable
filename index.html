@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration & Table</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        #registrationForm {
+            margin-bottom: 20px;
+        }
+        #dataTable th {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>User Registration</h2>
+        <form id="registrationForm">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="name">Name:</label>
+                    <input type="text" class="form-control" id="name" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control" id="email" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="age">Age:</label>
+                    <input type="number" class="form-control" id="age" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="city">City:</label>
+                    <input type="text" class="form-control" id="city" required>
+                </div>
+            </div>
+            <button type="button" class="btn btn-success" onclick="addTableRow()">Register</button>
+        </form>
+
+        <h2>Registered Users</h2>
+        <div class="form-group">
+            <label for="filterCity">Filter by City:</label>
+            <input type="text" class="form-control" id="filterCity" oninput="filterTable()">
+        </div>
+        <table class="table table-striped" id="dataTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">Name</th>
+                    <th onclick="sortTable(1)">Email</th>
+                    <th onclick="sortTable(2)">Age</th>
+                    <th onclick="sortTable(3)">City</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function addTableRow() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const age = document.getElementById('age').value;
+            const city = document.getElementById('city').value;
+
+            if (name && email && age && city) {
+                const table = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
+                const newRow = table.insertRow(table.rows.length);
+                const cell1 = newRow.insertCell(0);
+                const cell2 = newRow.insertCell(1);
+                const cell3 = newRow.insertCell(2);
+                const cell4 = newRow.insertCell(3);
+                cell1.innerHTML = name;
+                cell2.innerHTML = email;
+                cell3.innerHTML = age;
+                cell4.innerHTML = city;
+
+                document.getElementById('name').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('age').value = '';
+                document.getElementById('city').value = '';
+
+                filterTable();
+            } else {
+                alert("Please fill all fields.");
+            }
+        }
+
+        function sortTable(n) {
+            let table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById("dataTable");
+            switching = true;
+            dir = "asc";
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    if (dir == "asc") {
+                        if (n === 2) { // Age column sorting
+                            if (Number(x.innerHTML) > Number(y.innerHTML)) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        } else {
+                            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        }
+                    } else if (dir == "desc") {
+                        if (n === 2) { // Age column sorting
+                            if (Number(x.innerHTML) < Number(y.innerHTML)) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        } else {
+                            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    switchcount++;
+                } else {
+                    if (switchcount == 0 && dir == "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+
+        function filterTable() {
+          const filter = document.getElementById("filterCity").value.toLowerCase();
+          const table = document.getElementById("dataTable");
+          const tr = table.getElementsByTagName("tr");
+          for (let i = 1; i < tr.length; i++) {
+            const td = tr[i].getElementsByTagName("td")[3];
+            if (td) {
+              const txtValue = td.textContent || td.innerText;
+              if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+              } else {
+                tr[i].style.display = "none";
+              }
+            }
+          }
+        }
+
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
